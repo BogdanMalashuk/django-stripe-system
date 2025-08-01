@@ -13,18 +13,18 @@ class Item(models.Model):
 
 class Discount(models.Model):
     name = models.CharField(max_length=100)
-    amount = models.IntegerField(help_text="Discount amount in cents")
+    percentage = models.FloatField(help_text="Discount percentage (e.g. 20 for 20%)")
 
     def __str__(self):
-        return f"{self.name} (-{self.amount / 100:.2f})"
+        return f"{self.name} (-{self.percentage:.1f}%)"
 
 
 class Tax(models.Model):
     name = models.CharField(max_length=100)
-    amount = models.IntegerField(help_text="Tax amount in cents")
+    percentage = models.FloatField(help_text="Tax percentage (e.g. 15 for 15%)")
 
     def __str__(self):
-        return f"{self.name} (+{self.amount / 100:.2f})"
+        return f"{self.name} (+{self.percentage:.1f}%)"
 
 
 class Order(models.Model):
@@ -34,12 +34,12 @@ class Order(models.Model):
     tax = models.ForeignKey(Tax, null=True, blank=True, on_delete=models.SET_NULL)
 
     def total_amount(self):
-        total = sum(item.total_price() for item in self.items.all())
+        total = sum(item.total_price() for item in self.items.all())  # in cents
         if self.discount:
-            total -= self.discount.amount
+            total -= total * (self.discount.percentage / 100)
         if self.tax:
-            total += self.tax.amount
-        return max(total, 0)
+            total += total * (self.tax.percentage / 100)
+        return max(int(total), 0)
 
     def get_currency(self):
         first_item = self.items.first()
@@ -57,7 +57,7 @@ class OrderItem(models.Model):
     quantity = models.PositiveIntegerField(default=1)
 
     def total_price(self):
-        return self.item.price * self.quantity / 100
+        return self.item.price * self.quantity
 
     def __str__(self):
         return f"{self.quantity} × {self.item.name}"
