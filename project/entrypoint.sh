@@ -10,3 +10,7 @@ User = get_user_model()
 if not User.objects.filter(username="admin").exists():
     User.objects.create_superuser("admin", "admin@admin.com", "admin")
 END
+
+echo "🚀 Starting server..."
+python manage.py runserver 0.0.0.0:8000
+
