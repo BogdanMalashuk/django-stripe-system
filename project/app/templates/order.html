@@ -81,9 +81,9 @@
       <h1>Order #{{ order.id }}</h1>
 
       <ul>
-        {% for item in order.items.all %}
+        {% for item in items %}
           <li>
-            {{ item.item.name }} — {{ item.quantity }} × {{ item.item.price|floatformat:2 }} {{ item.item.currency|upper }}
+            {{ item.name }} — {{ item.quantity }} × {{ item.price|floatformat:2 }} {{ item.currency|upper }}
           </li>
         {% endfor %}
       </ul>
@@ -116,7 +116,6 @@
                 alert(result.error.message);
               } else if (result.paymentIntent && result.paymentIntent.status === "succeeded") {
                 alert("Payment successful!");
-                // Redirect or update UI if needed
               }
             });
           });
