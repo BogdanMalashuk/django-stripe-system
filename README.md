@@ -80,5 +80,10 @@ python manage.py migrate
 python manage.py createsuperuser
 python manage.py runserver
 ```
+
+### 6. Запустить отслеживание вебхуков успешной оплаты заказа
+```
+stripe listen --events payment_intent.succeeded --forward-to localhost:8000/webhook/
+```
 ---
 
